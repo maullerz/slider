@@ -15,7 +15,8 @@ const Thumb = ({ color = 'darkcyan', trackHeight, size = 15, style, thumbImage }
     height: trackHeight,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1
+    zIndex: 1,
+    paddingHorizontal: size / 2 - 1
   }), [trackHeight])
 
   /** We want to cover the end of the track */
@@ -26,11 +27,12 @@ const Thumb = ({ color = 'darkcyan', trackHeight, size = 15, style, thumbImage }
       backgroundColor: color,
       zIndex: 1,
       borderRadius: size / 2,
-      overflow: 'hidden',
+      overflow: 'hidden'
       // This is for web
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      userSelect: 'none'
+      // Warning: Failed prop type: Invalid props.style key `userSelect` supplied to `Image`.
+      // userSelect: 'none',
     },
     style
   ), [style, size, color])
