@@ -21,22 +21,33 @@ const useRange = ({ step, range: propValue, minimumRange, minimumValue, maximumV
   const onValueChangeRef = React.useRef(onValueChange)
   onValueChangeRef.current = onValueChange
 
-  const updateRange = React.useCallback((rangeUpdate: React.SetStateAction<[number, number]>) => {
+  const updateRange = React.useCallback((rangeUpdate: React.SetStateAction<[number, number]>, fromProps: boolean) => {
     setRange(oldRange => {
       const newRange = typeof rangeUpdate === 'function' ? rangeUpdate(oldRange) : rangeUpdate
       // If no change, we return the previous object to avoir rerenders
       if (oldRange[0] === newRange[0] && oldRange[1] === newRange[1]) return oldRange
+
       // We call onValueChange as soon as the setState is over
-      setTimeout(() => onValueChangeRef.current && onValueChangeRef.current(newRange), 0)
+      // And only if that update doesn't forced just by new props to prevent recurrence
+      if (!fromProps) {
+        setTimeout(() => onValueChangeRef.current && onValueChangeRef.current(newRange), 0)
+      }
       return newRange
     })
   }, [])
 
   // When the propValue changes, we need to update the min and max values accordingly
-  React.useEffect(() => { updateRange([minProp, maxProp]) }, [minProp, maxProp, updateRange])
+  React.useEffect(() => {
+    updateRange([minProp, maxProp], true)
+  }, [minProp, maxProp, updateRange])
 
-  const updateMin = React.useCallback((newMin: number) => updateRange(([, oldMax]) => [newMin, oldMax]), [updateRange])
-  const updateMax = React.useCallback((newMax: number) => updateRange(([oldMin]) => [oldMin, newMax]), [updateRange])
+  const updateMin = React.useCallback((newMin: number) => {
+    updateRange(([, oldMax]) => [newMin, oldMax], false)
+  }, [updateRange])
+
+  const updateMax = React.useCallback((newMax: number) => {
+    updateRange(([oldMin]) => [oldMin, newMax], false)
+  }, [updateRange])
 
   // Min value thumb
   const { updateValue: updateMinValue, canMove: canMoveMin } = useThumb({

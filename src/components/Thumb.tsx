@@ -17,7 +17,7 @@ const Thumb = ({ color = 'darkcyan', trackHeight, size = 15, style, thumbImage }
     alignItems: 'center',
     zIndex: 1,
     paddingHorizontal: size / 2 - 1
-  }), [trackHeight])
+  }), [trackHeight, size])
 
   /** We want to cover the end of the track */
   const thumbViewStyle = React.useMemo(() => RN.StyleSheet.compose(
