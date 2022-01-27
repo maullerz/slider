@@ -15,11 +15,18 @@ type Props = {
 /** Handle the state of a range slider */
 const useRange = ({ step, range: propValue, minimumRange, minimumValue, maximumValue, slideOnTap, onValueChange, crossingAllowed }: Props) => {
   const [range, setRange] = React.useState(propValue)
+  const [rangeExt, setRangeExt] = React.useState(propValue)
   const [minProp, maxProp] = propValue
 
   // We need to access the last callback value
   const onValueChangeRef = React.useRef(onValueChange)
   onValueChangeRef.current = onValueChange
+
+  React.useEffect(() => {
+    if (range[0] !== propValue[0] || range[1] !== propValue[1]) {
+      onValueChangeRef.current && onValueChangeRef.current(rangeExt)
+    }
+  }, [rangeExt])
 
   const updateRange = React.useCallback((rangeUpdate: React.SetStateAction<[number, number]>, fromProps: boolean) => {
     setRange(oldRange => {
@@ -30,7 +37,9 @@ const useRange = ({ step, range: propValue, minimumRange, minimumValue, maximumV
       // We call onValueChange as soon as the setState is over
       // And only if that update doesn't forced just by new props to prevent recurrence
       if (!fromProps) {
-        setTimeout(() => onValueChangeRef.current && onValueChangeRef.current(newRange), 0)
+        setRangeExt(newRange)
+        // That was sooo junky:
+        // setTimeout(() => onValueChangeRef.current && onValueChangeRef.current(newRange), 0)
       }
       return newRange
     })
