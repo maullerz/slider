@@ -130,6 +130,7 @@ const ResponderView = React.forwardRef<RN.View, Props>(({
     onMoveShouldSetResponder={isEnabled}
     onResponderGrant={onPress}
     onResponderRelease={onRelease}
+    onResponderTerminate={onRelease} // when it happens we should fire onRelease
     onResponderMove={onMove}
     // This is for web
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
