@@ -82,6 +82,12 @@ const useRange = ({ step, range: propValue, minimumRange, minimumValue, maximumV
 
   // Method to update the lower or higher bound according to which one is the closest
   const updateClosestValue = React.useCallback((value: number, state: 'drag' | 'press' | 'release') => {
+    // it can happen on Release when parent intercepts vertical scroll event
+    if (Number.isNaN(value)) {
+      // state === 'release'
+      currentThumb.current = undefined;
+      return range;
+    }
     const [minValue, maxValue] = range
     // When moving a thumb, we don't want to let it cross the other thumb
     const isMinClosest = (currentThumb.current && !crossingAllowed)
